@@ -145,7 +145,7 @@ checked once it's done and ready to commit.
    before, and lint passes
 9. [x] adapt the bump skill, `.agents/skills/testbed-bump-versions/`, to the pins in
    `versions.just`, like the BeIDConnect tag, and rename it
-10. [ ] document the host prerequisites in `docs/udd/` and the usage in the README
+10. [x] document the host prerequisites in `docs/udd/` and the usage in the README
 
 ## Open questions
 

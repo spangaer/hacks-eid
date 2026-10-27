@@ -3,12 +3,39 @@
 A Belgian e-ID card in a reader on the host, used from Chromium in the devcontainer, for
 authentication and signing, without giving the devcontainer privileges.
 
-Work in progress: the target and the steps to it are in [PLAN.eid/](../../PLAN.eid/README.md),
-until they're built and described here.
-
 The why of a single detail is in a comment next to it. These pages cover what spans files.
 
 Paths are relative to the repo root, where `just <recipe>` runs the recipes.
+
+## Host prerequisites
+
+Nothing gets installed or built on the host, but it has to offer the following; tested on
+Debian with rootless Podman.
+
+- Linux, with VS Code's Dev Containers on rootless Podman, where the container's `vscode` is
+  the host user, `keep-id`; the reader's pass-through relies on that, see [Reader](#reader)
+- an X display, which VS Code forwards into the container, for Chromium, eid-viewer and the PIN
+  dialogs; a desktop session, X11 or Xwayland
+- a CCID smartcard reader, like the ACS ACR38U, plugged in when the container is created
+- read-write on the reader's node for the host user. On a desktop, systemd's `uaccess` grants it
+  to the seat's user for most readers; check on the host, with the reader's bus and device
+  numbers from `lsusb`:
+
+  ```sh
+  getfacl /dev/bus/usb/BBB/DDD    # look for user:<you>:rw-
+  ```
+
+  Without it, `usb-bus-link.sh` reports `no read-write` when the container is created. The
+  least that fixes it is a udev rule, e.g. `/etc/udev/rules.d/70-smartcard.rules`, numbered
+  before systemd's `73-seat-late.rules`, with the reader's IDs from `lsusb`; then replug it:
+
+  ```
+  SUBSYSTEM=="usb", ATTR{idVendor}=="072f", ATTR{idProduct}=="90cc", TAG+="uaccess"
+  ```
+
+- no pcscd on the host holding the reader; Debian doesn't install it by default. If it's there,
+  `systemctl stop pcscd.socket pcscd.service`, or disable them
+- internet access, for the eID repo, BeIDConnect's sources and the Chrome Web Store
 
 ## Packages
 
