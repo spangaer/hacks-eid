@@ -103,8 +103,8 @@ container starts without one.
 ## BeIDConnect, built in the devcontainer
 
 - a `beidconnect` recipe clones
-  [Fedict/fts-beidconnect](https://github.com/Fedict/fts-beidconnect) at a tag pinned in the
-  `eid/` component, with its commit, into `.local/eid/src/`, and builds a `.deb` in
+  [Fedict/fts-beidconnect](https://github.com/Fedict/fts-beidconnect) at a tag pinned in
+  `versions.just`, with its commit, into `.local/eid/src/`, and builds a `.deb` in
   `.local/eid/debs/` with the repo's own `debian/`, named after the tag; so it survives a
   rebuild, and only a bumped pin builds anew
 - done: `debian/`'s postinst runs `beidconnect -setup`, which writes the native messaging
@@ -126,7 +126,7 @@ checked once it's done and ready to commit.
 
 1. [x] host check: `getfacl` on the reader's node shows the user's ACL
 2. [x] new `eid/` component: `justfile`, idempotent `setup` called from the root's, state in
-   `.local/eid/`, `docs/udd/`
+   `.local/eid/`, `docs/udd/`; flattened into the root in step 8
 3. [x] packages: the eID repo, the `polkitd` stub, `pcscd`, `libccid`, `pcsc-tools`, `opensc`,
    `eid-mw`, `eid-viewer`; in the Dockerfile and by hand, per the conventions
 4. [x] reader: the bus link and mount into devcontainer.json, and pcscd started; done when
@@ -137,9 +137,13 @@ checked once it's done and ready to commit.
    login with the card succeeds
 7. [x] signing: the `beidconnect` recipe, setup installs the `.deb` and its manifest, and the
    extension goes into the profile; done when a document signs on a BeIDConnect signing page
-8. [ ] adapt the bump skill, `.agents/skills/testbed-bump-versions/`, to `eid/`'s pins, like the
-   BeIDConnect commit, and rename it
-9. [ ] document the host prerequisites in `eid/docs/udd/` and the usage in the README
+8. [x] flatten `eid/` into the root, as the repo has no other purpose: one `justfile`, recipes
+   without the `eid::` prefix, `versions.just`, `env/` and `docs/udd/` in the root; state stays
+   in `.local/eid/`, next to `.local/host/`. Done when setup, start and the recipes work as
+   before, and lint passes
+9. [ ] adapt the bump skill, `.agents/skills/testbed-bump-versions/`, to the pins in
+   `versions.just`, like the BeIDConnect tag, and rename it
+10. [ ] document the host prerequisites in `docs/udd/` and the usage in the README
 
 ## Open questions
 

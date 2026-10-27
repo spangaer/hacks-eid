@@ -12,8 +12,8 @@ argument-hint: 'optional k3s channel: stable (default), latest, or a minor like 
 
 > [!WARNING]
 > Not yet adapted: this is the k8s-testbed skill, and `testbed/` is gone from this repo. Don't
-> run it; keep it as the template for bumping this repo's own pins, like the BeIDConnect commit
-> of `eid/`, once they exist.
+> run it; keep it as the template for bumping this repo's own pins, in
+> [versions.just](../../../versions.just), like the BeIDConnect tag.
 
 Every download is pinned in [versions.just](../../../testbed/versions.just), with its checksum,
 and cached in `.local/testbed/cache/` under a file name that carries the version. A bump fetches

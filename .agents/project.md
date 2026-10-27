@@ -2,46 +2,37 @@
 
 ## Layout
 
-The repo is a devcontainer with self-contained components next to each other. Each component
-has its own folder with a `justfile` and its own docs; new code goes in a new folder beside
-them, rather than into an existing one.
+The repo is a devcontainer for a single purpose, the Belgian e-ID, so it's flat: one `justfile`,
+its scripts and docs in the root.
 
 ```
 .devcontainer/    the devcontainer: package installs, host device pass-through, environment
-justfile          mounts each component as a just module, plus repo-wide recipes
-eid/              Belgian e-ID in the devcontainer, see its docs/udd/
+justfile          all recipes; just lists them
+versions.just     pinned versions and checksums, imported by the justfile
+env/              the scripts behind the recipes, like setup and start
+docs/udd/         how it fits together; read it before changing anything
 .agents/          agent instructions and skills, see the index below
-.local/           runtime state and caches, a dir per component; gitignored, survives a rebuild
+.local/           runtime state and caches, gitignored, survives a rebuild: eid/ for the e-ID,
+                  host/ for the links usb-bus-link.sh makes on the host
+signing/          documents to sign and signed ones, gitignored; visible for Chromium's dialog
 PLAN.<ticket>/    the plan for the ticket in the branch name, if any
 ```
 
-The agent index is [README.md](./README.md).
-
-Components:
-
-- [eid/](../eid/): a Belgian e-ID reader on the host, used from Chromium in the devcontainer;
-  read [docs/udd/](../eid/docs/udd/README.md) before changing it
-
-## Recipes
-
-`just` lists the recipes where it runs: in the root, the repo-wide ones and the modules; in a
-component's folder, that component's. From the root, a module's recipes run as
-`just <module>::<recipe>`, but its variables can only be set in its folder, e.g.
-`cd <module> && just var=value <recipe>`.
+The agent index is [README.md](./README.md). The design: [docs/udd/](../docs/udd/README.md).
 
 ## Conventions
 
 - devcontainer changes must apply to the running container too: install packages by hand with
-  the Dockerfile's `apt-get install` line, and put setup logic in an idempotent `setup` recipe,
-  which the root's `setup` calls, never only in the Dockerfile
+  the Dockerfile's `apt-get install` line, and put setup logic in the idempotent `setup` recipe,
+  never only in the Dockerfile
 - giving the devcontainer privileges is off limits; a host device only goes in when the host
   already grants it to the user, through a link checked on the host, like
   [usb-bus-link.sh](../.devcontainer/usb-bus-link.sh)'s: rootless, the host's permissions are
   the boundary, and a USB bus dir is the widest a pass-through goes
-- a component keeps its state in `.local/<component>/`
+- state goes in `.local/eid/`, never the home dir or `/etc` alone: both are lost on rebuild,
+  so what has to live there, setup writes anew
 - every new file gets an SPDX header, MIT: run `just annotate`, never
   `reuse annotate --recursive`, which can't skip what `REUSE.toml` covers: Markdown and
   `.gitignore` under MIT-0, and JSON other than VS Code's JSONC under MIT; `just lint` checks
   it all
-- the why of a detail goes in a comment next to it; what spans files goes in the component's
-  `docs/udd/`
+- the why of a detail goes in a comment next to it; what spans files goes in `docs/udd/`

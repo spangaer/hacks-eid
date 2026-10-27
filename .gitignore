@@ -3,5 +3,5 @@ target/
 commit-message.md
 .local/
 # documents to sign from Chromium and their signed copies, kept visible as its file dialog hides
-# dot dirs badly; eid/'s setup makes it
+# dot dirs badly; setup makes it
 signing/

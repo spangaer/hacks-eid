@@ -96,7 +96,7 @@ JSON
 # signing/, in the repo root: uploads/, for documents to sign from Chromium, and downloads/, for
 # what it saves, like signed documents; out of .local/, as Chromium's GTK file dialog shows dot
 # dirs badly. Both are bookmarked in that dialog; the bookmarks are in the home dir.
-signing=$(cd "$(dirname "$0")/../.." && pwd)/signing
+signing=$(cd "$(dirname "$0")/.." && pwd)/signing
 bookmarks=$HOME/.config/gtk-3.0/bookmarks
 mkdir -p "$signing/uploads" "$signing/downloads" "${bookmarks%/*}"
 for dir in uploads downloads; do
