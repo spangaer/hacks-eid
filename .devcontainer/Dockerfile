@@ -21,12 +21,12 @@ RUN printf '%s\n' \
 RUN apt-get update && apt-get install -y time ripgrep just tk shellcheck iputils-ping \
       dnsutils reuse
 
-# e-ID tooling, see PLAN.eid/; pcscd, eid-mw and eid-viewer aren't here: they need the eID repo
-# and a polkitd stub first, which eid/'s setup provides
+# e-ID tooling, see eid/; pcscd, eid-mw and eid-viewer aren't here: they need the eID repo and
+# a polkitd stub first, which eid/'s setup provides
 # libccid: driver for USB CCID smartcard readers, like the ACS ACR38U
 # pcsc-tools: pcsc_scan, to see readers and cards
 # opensc: pkcs11-tool, to test the PKCS#11 module
 # chromium: the browser that's to use the card
 # equivs: builds the polkitd stub package
-# RUN apt-get update && apt-get install -y --no-install-recommends \
-#       libccid pcsc-tools opensc chromium equivs
+RUN apt-get update && apt-get install -y --no-install-recommends \
+      libccid pcsc-tools opensc chromium equivs

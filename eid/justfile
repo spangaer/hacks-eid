@@ -1,6 +1,8 @@
 # SPDX-FileCopyrightText: Jean-Luc Deprez <https://github.com/spangaer>
 # SPDX-License-Identifier: MIT
 
+import 'versions.just'
+
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
 # runtime state, in the repo's .local/; run as the root's module, justfile_directory() is the
@@ -11,6 +13,6 @@ local := parent_directory(source_directory()) / ".local" / "eid"
 default:
     @just --list
 
-# devcontainer setup; safe to rerun
+# devcontainer setup: the eID repo, a polkitd stub, pcscd and the middleware; safe to rerun
 setup:
-    mkdir -p {{ quote(local) }}
+    env/setup.sh {{ quote(local) }} {{ quote(eid_archive_url) }} {{ eid_archive_sha256 }}

@@ -119,7 +119,7 @@ checked once it's done and ready to commit.
 1. [x] host check: `getfacl` on the reader's node shows the user's ACL
 2. [x] new `eid/` component: `justfile`, idempotent `setup` called from the root's, state in
    `.local/eid/`, `docs/udd/`
-3. [ ] packages: the eID repo, the `polkitd` stub, `pcscd`, `libccid`, `pcsc-tools`, `opensc`,
+3. [x] packages: the eID repo, the `polkitd` stub, `pcscd`, `libccid`, `pcsc-tools`, `opensc`,
    `eid-mw`, `eid-viewer`; in the Dockerfile and by hand, per the conventions
 4. [ ] reader: the bus link and mount into devcontainer.json, and pcscd started; done when
    `pcsc_scan` sees the reader and the card, also after a replug and a pcscd restart
