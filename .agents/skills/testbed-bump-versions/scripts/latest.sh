@@ -10,7 +10,8 @@ set -euo pipefail
 
 channel=${1:-stable}
 testbed=$(git -C "$(dirname "$0")" rev-parse --show-toplevel)/testbed
-# shellcheck source=SCRIPTDIR/../../../../testbed/env/lib.sh
+# not yet adapted: testbed/ is gone, so lint can't follow this; see SKILL.md
+# shellcheck source=/dev/null
 source "$testbed/env/lib.sh"
 tmp=$(mktemp -d)
 trap 'rm -rf "$tmp"' EXIT

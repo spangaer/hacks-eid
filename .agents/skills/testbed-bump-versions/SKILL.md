@@ -3,11 +3,17 @@ name: testbed-bump-versions
 description: 'Bump the pinned versions and checksums in testbed/versions.just: Debian cloud
   image, k3s binary, airgap images and install.sh, kubectl, krew and the krew-index revision.
   Use when asked to update, upgrade, bump or refresh pins, versions, checksums, k3s,
-  Kubernetes, kubectl, krew or the Debian image, or to check whether newer versions exist.'
+  Kubernetes, kubectl, krew or the Debian image, or to check whether newer versions exist.
+  NOT YET ADAPTED: testbed/ is gone, keep it as a template for this repo's own pins.'
 argument-hint: 'optional k3s channel: stable (default), latest, or a minor like v1.36'
 ---
 
 # Bump the testbed's pinned versions
+
+> [!WARNING]
+> Not yet adapted: this is the k8s-testbed skill, and `testbed/` is gone from this repo. Don't
+> run it; keep it as the template for bumping this repo's own pins, like the BeIDConnect commit
+> of `eid/`, once they exist.
 
 Every download is pinned in [versions.just](../../../testbed/versions.just), with its checksum,
 and cached in `.local/testbed/cache/` under a file name that carries the version. A bump fetches

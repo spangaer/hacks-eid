@@ -21,13 +21,12 @@ RUN printf '%s\n' \
 RUN apt-get update && apt-get install -y time ripgrep just tk shellcheck iputils-ping \
       dnsutils reuse
 
-# k8s test env tooling
-# qemu-*, cloud-image-utils: cluster and build VMs under TCG, seed.iso via genisoimage
-# socat: clean VM shutdown through QEMU's control socket
-# podman, uidmap, netavark: rootless builds and runs; podman needs netavark even on host network
-# docker-registry: local registry the VMs pull from and push to
-# docker-cli, docker-buildx: client for the build VM's dockerd
-RUN apt-get update && apt-get install -y --no-install-recommends \
-      qemu-system-x86 qemu-utils cloud-image-utils socat \
-      podman uidmap netavark \
-      docker-registry docker-cli docker-buildx
+# e-ID tooling, see PLAN.eid/; pcscd, eid-mw and eid-viewer aren't here: they need the eID repo
+# and a polkitd stub first, which eid/'s setup provides
+# libccid: driver for USB CCID smartcard readers, like the ACS ACR38U
+# pcsc-tools: pcsc_scan, to see readers and cards
+# opensc: pkcs11-tool, to test the PKCS#11 module
+# chromium: the browser that's to use the card
+# equivs: builds the polkitd stub package
+# RUN apt-get update && apt-get install -y --no-install-recommends \
+#       libccid pcsc-tools opensc chromium equivs
