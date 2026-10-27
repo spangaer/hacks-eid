@@ -54,6 +54,31 @@ From the reader up, each layer on the one before:
 - `just eid::card`: the PKCS#11 module, `libbeidpkcs11.so.0`, lists the card's token
 - `just eid::viewer`: eid-viewer reads the card; its PIN test checks the PIN dialog, on the
   forwarded X display
+- `just eid::chromium https://iamapps.belgium.be/tma`: the government's test login, with the
+  card, through CSAM
+
+## Chromium
+
+```
+Chromium ── NSS ── ~/.pki/nssdb/pkcs11.txt: library=libbeidpkcs11.so.0
+                └─ libbeidpkcs11 ── pcscd ── the card: certificates, keys, PIN
+```
+
+- PKCS#11 is the standard C API to crypto devices, like smartcards; a module is a vendor's
+  library that implements it for its device, here `libbeidpkcs11.so.0`, from eid-mw
+- on Linux, Chromium handles certificates through NSS, which knows no cards nor pcscd; it loads
+  the modules listed in its DB, `~/.pki/nssdb`, and shows what they offer. Without the entry,
+  the card is invisible: no client certificate for a login like CSAM's
+- the entry is just the library's name; the module reads the card through pcscd when asked, so
+  certificates come and go with the card, and the PIN and signing stay on it
+- the DB is in the home dir, not Chromium's profile, so it's lost on rebuild: `just setup`
+  adds the entry if it's missing. With `modutil`, as `beid-update-nssdb`, meant for a desktop
+  login, errors on a new DB; and Debian's Chromium ignores eid-mw's p11-kit config
+- `just eid::chromium [args]`: its profile, in `.local/eid/chromium/`, survives a rebuild;
+  args, like a URL, go to Chromium
+- the sandbox works as is; `--disable-gpu`, as GPU compositing over the forwarded X display
+  draws a see-through window
+- the D-Bus errors it logs are harmless: the container has no system bus
 
 ## State
 
@@ -61,3 +86,4 @@ From the reader up, each layer on the one before:
 
 - `cache/`: downloads, named after their version
 - `debs/`: packages built here, like `polkitd-stub`
+- `chromium/`: Chromium's profile

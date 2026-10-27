@@ -62,3 +62,12 @@ pkgs=(pcscd eid-mw eid-viewer)
 if ! installed "${pkgs[@]}"; then
     apt install -y --no-install-recommends "${pkgs[@]}"
 fi
+
+# Chromium reads PKCS#11 modules from ~/.pki/nssdb, not its profile, so it's lost on rebuild.
+# modutil, not beid-update-nssdb, which errors on a new DB, as it first deletes the module.
+nssdb=$HOME/.pki/nssdb
+if ! grep -qs libbeidpkcs11 "$nssdb/pkcs11.txt"; then
+    mkdir -p "$nssdb"
+    [[ -f $nssdb/cert9.db ]] || certutil -d "sql:$nssdb" -N --empty-password
+    modutil -force -dbdir "sql:$nssdb" -add "Belgium eID" -libfile libbeidpkcs11.so.0
+fi

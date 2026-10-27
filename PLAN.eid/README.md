@@ -92,11 +92,11 @@ container starts without one.
 
 - display: VS Code forwards X11, `DISPLAY=:0` on `/tmp/.X11-unix/X0`, like gitk uses; the PIN
   dialogs of libbeidpkcs11 use `pinentry-x11` over the same display
-- to verify: Chromium's sandbox needs nested user namespaces; if they fail under rootless
-  Podman, `--no-sandbox`, documented as the known trade-off. No GPU: `--disable-gpu` if needed
+- verified: Chromium's sandbox works under rootless Podman, no `--no-sandbox`; `--disable-gpu`
+  is needed, else GPU compositing over the forwarded display draws a see-through window
 - the NSS DB, `~/.pki/nssdb`, and the home dir are lost on rebuild: setup registers the module
-  with `beid-update-nssdb`, or `modutil`, each time; the Chromium profile, with the extension,
-  goes in `.local/eid/chromium/` through `--user-data-dir`, so it survives
+  with `modutil` each time; `beid-update-nssdb` errors on a new DB. The Chromium profile, with
+  the extension, goes in `.local/eid/chromium/` through `--user-data-dir`, so it survives
 - BeIDConnect's native messaging manifest goes in `/etc/chromium/native-messaging-hosts/`,
   from setup
 
@@ -127,7 +127,7 @@ checked once it's done and ready to commit.
    `pcsc_scan` sees the reader and the card, also after a replug and a pcscd restart
 5. [x] middleware: done when `pkcs11-tool --module libbeidpkcs11.so.0 -L` lists the card and
    `eid-viewer` reads it
-6. [ ] authentication: Chromium, its launcher recipe and the NSS registration; done when a CSAM
+6. [x] authentication: Chromium, its launcher recipe and the NSS registration; done when a CSAM
    login with the card succeeds
 7. [ ] signing: the `beidconnect` recipe, setup installs the `.deb` and its manifest, and the
    extension goes into the profile; done when a document signs on a BeIDConnect signing page

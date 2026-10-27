@@ -36,3 +36,10 @@ card:
 # the eID viewer: the card's data, its certificates, and a PIN test
 viewer:
     eid-viewer
+
+# Chromium, with its profile in .local/, so it survives a rebuild; args go to Chromium, like a URL
+# --disable-gpu, as over the forwarded X display, GPU compositing draws a see-through window
+[positional-arguments]
+chromium *args:
+    mkdir -p {{ quote(local / "chromium") }}
+    chromium --user-data-dir={{ quote(local / "chromium") }} --disable-gpu "$@"
