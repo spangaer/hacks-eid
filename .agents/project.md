@@ -9,6 +9,7 @@ them, rather than into an existing one.
 ```
 .devcontainer/    the devcontainer: package installs, host device pass-through, environment
 justfile          mounts each component as a just module, plus repo-wide recipes
+eid/              Belgian e-ID in the devcontainer, see its docs/udd/
 .agents/          agent instructions and skills, see the index below
 .local/           runtime state and caches, a dir per component; gitignored, survives a rebuild
 PLAN.<ticket>/    the plan for the ticket in the branch name, if any
@@ -16,7 +17,10 @@ PLAN.<ticket>/    the plan for the ticket in the branch name, if any
 
 The agent index is [README.md](./README.md).
 
-Components: none yet.
+Components:
+
+- [eid/](../eid/): a Belgian e-ID reader on the host, used from Chromium in the devcontainer;
+  read [docs/udd/](../eid/docs/udd/README.md) before changing it
 
 ## Recipes
 

@@ -1,0 +1,16 @@
+# SPDX-FileCopyrightText: Jean-Luc Deprez <https://github.com/spangaer>
+# SPDX-License-Identifier: MIT
+
+set shell := ["bash", "-euo", "pipefail", "-c"]
+
+# runtime state, in the repo's .local/; run as the root's module, justfile_directory() is the
+# root, hence source_directory()
+local := parent_directory(source_directory()) / ".local" / "eid"
+
+# list recipes
+default:
+    @just --list
+
+# devcontainer setup; safe to rerun
+setup:
+    mkdir -p {{ quote(local) }}

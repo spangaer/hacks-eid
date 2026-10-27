@@ -113,24 +113,25 @@ and the container starts without one, like device-link.sh does with `/dev/null`.
 
 ## Steps
 
-Each step ends with a check that must pass before the next.
+Each step ends with a check that must pass before the next, and gets its own commit; a step is
+checked once it's done and ready to commit.
 
-1. done: host check, `getfacl` on the reader's node shows the user's ACL
-2. new `eid/` component: `justfile`, idempotent `setup` called from the root's, state in
+1. [x] host check: `getfacl` on the reader's node shows the user's ACL
+2. [x] new `eid/` component: `justfile`, idempotent `setup` called from the root's, state in
    `.local/eid/`, `docs/udd/`
-3. packages: the eID repo, the `polkitd` stub, `pcscd`, `libccid`, `pcsc-tools`, `opensc`,
+3. [ ] packages: the eID repo, the `polkitd` stub, `pcscd`, `libccid`, `pcsc-tools`, `opensc`,
    `eid-mw`, `eid-viewer`; in the Dockerfile and by hand, per the conventions
-4. reader: the bus link and mount into devcontainer.json, and pcscd started; done when
+4. [ ] reader: the bus link and mount into devcontainer.json, and pcscd started; done when
    `pcsc_scan` sees the reader and the card, also after a replug and a pcscd restart
-5. middleware: done when `pkcs11-tool --module libbeidpkcs11.so.0 -L` lists the card and
+5. [ ] middleware: done when `pkcs11-tool --module libbeidpkcs11.so.0 -L` lists the card and
    `eid-viewer` reads it
-6. authentication: Chromium, its launcher recipe and the NSS registration; done when a CSAM
+6. [ ] authentication: Chromium, its launcher recipe and the NSS registration; done when a CSAM
    login with the card succeeds
-7. signing: the `beidconnect` recipe, setup installs the `.deb` and its manifest, and the
+7. [ ] signing: the `beidconnect` recipe, setup installs the `.deb` and its manifest, and the
    extension goes into the profile; done when a document signs on a BeIDConnect signing page
-8. adapt the bump skill, `.agents/skills/testbed-bump-versions/`, to `eid/`'s pins, like the
+8. [ ] adapt the bump skill, `.agents/skills/testbed-bump-versions/`, to `eid/`'s pins, like the
    BeIDConnect commit, and rename it
-9. document the host prerequisites in `eid/docs/udd/` and the usage in the README
+9. [ ] document the host prerequisites in `eid/docs/udd/` and the usage in the README
 
 ## Open questions
 

@@ -3,14 +3,17 @@
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
 
+# the e-ID component's recipes, e.g. just eid::setup
+mod eid
+
 # list recipes
 default:
     @just --list --list-submodules
 
-# calls each component's setup as just <module>::setup, none yet
+# calls each component's setup as just <module>::setup
 # devcontainer setup, run on create; safe to rerun
 setup:
-    @true
+    just eid::setup
 
 # git's file list and reuse skip what .gitignore excludes, like .local/
 # lint licensing and all shell scripts
