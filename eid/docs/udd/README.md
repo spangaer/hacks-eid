@@ -46,6 +46,15 @@ host                                    devcontainer
 - the reader moved to another bus: the mount stays on the old one until a rebuild; `just start`
   warns
 
+## Checks
+
+From the reader up, each layer on the one before:
+
+- `just eid::scan`: pcscd sees the reader, and the card as it goes in or out
+- `just eid::card`: the PKCS#11 module, `libbeidpkcs11.so.0`, lists the card's token
+- `just eid::viewer`: eid-viewer reads the card; its PIN test checks the PIN dialog, on the
+  forwarded X display
+
 ## State
 
 `.local/eid/`, made by `just setup`; it survives a rebuild.

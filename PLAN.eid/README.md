@@ -125,7 +125,7 @@ checked once it's done and ready to commit.
    `eid-mw`, `eid-viewer`; in the Dockerfile and by hand, per the conventions
 4. [x] reader: the bus link and mount into devcontainer.json, and pcscd started; done when
    `pcsc_scan` sees the reader and the card, also after a replug and a pcscd restart
-5. [ ] middleware: done when `pkcs11-tool --module libbeidpkcs11.so.0 -L` lists the card and
+5. [x] middleware: done when `pkcs11-tool --module libbeidpkcs11.so.0 -L` lists the card and
    `eid-viewer` reads it
 6. [ ] authentication: Chromium, its launcher recipe and the NSS registration; done when a CSAM
    login with the card succeeds

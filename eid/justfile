@@ -24,3 +24,15 @@ start:
 # restart pcscd, to see a replugged reader, as nothing tells it in the container
 restart:
     env/start.sh restart
+
+# watch readers and cards come and go, through pcscd; Ctrl+C to stop
+scan:
+    pcsc_scan
+
+# list the card's token through the PKCS#11 module, as browsers see it
+card:
+    pkcs11-tool --module libbeidpkcs11.so.0 -L
+
+# the eID viewer: the card's data, its certificates, and a PIN test
+viewer:
+    eid-viewer
