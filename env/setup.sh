@@ -5,12 +5,12 @@
 
 # Devcontainer setup for the e-ID: the eID repo, a polkitd stub and the packages that need them;
 # safe to rerun, it skips what's there. Debian's own packages are in the Dockerfile.
-# usage: setup.sh <state dir> <eid-archive url> <eid-archive sha256> <beidconnect repo> <tag>
+# usage: setup.sh <state dir> <eid-archive version> <url> <sha256> <beidconnect repo> <tag>
 #   <commit>
 set -euo pipefail
 
-state=$1 archive_url=$2 archive_sha256=$3
-bc_repo=$4 bc_tag=$5 bc_commit=$6
+state=$1 archive_version=$2 archive_url=$3 archive_sha256=$4
+bc_repo=$5 bc_tag=$6 bc_commit=$7
 cache=$state/cache debs=$state/debs
 
 # no tty in postCreateCommand: noninteractive spares the debconf fallback chatter
@@ -25,8 +25,9 @@ installed() {
 
 mkdir -p "$cache" "$debs"
 
-# the repo's own package: its postinst writes the apt source for this release, its key too
-if ! installed eid-archive; then
+# the repo's own package: its postinst writes the apt source for this release, its key too;
+# installed again on a bumped pin, as a new one may bring a new key
+if [[ $(dpkg-query -W -f '${Version}' eid-archive 2> /dev/null) != "$archive_version" ]]; then
     deb=$cache/${archive_url##*/}
     if [[ ! -f $deb ]]; then
         curl -fsSL -o "$deb.tmp" "$archive_url"

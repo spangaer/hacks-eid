@@ -15,8 +15,9 @@ default:
 # the eID repo, a polkitd stub, pcscd, the middleware, BeIDConnect, and Chromium's config
 # devcontainer setup, run on create; safe to rerun
 setup:
-    env/setup.sh {{ quote(local) }} {{ quote(eid_archive_url) }} {{ eid_archive_sha256 }} \
-        {{ quote(beidconnect_repo) }} {{ beidconnect_tag }} {{ beidconnect_commit }}
+    env/setup.sh {{ quote(local) }} {{ eid_archive_version }} {{ quote(eid_archive_url) }} \
+        {{ eid_archive_sha256 }} {{ quote(beidconnect_repo) }} {{ beidconnect_tag }} \
+        {{ beidconnect_commit }}
 
 # pcscd, with the reader's bus linked
 # devcontainer services, run on start; safe to rerun

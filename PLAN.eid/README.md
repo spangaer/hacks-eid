@@ -141,7 +141,7 @@ checked once it's done and ready to commit.
    without the `eid::` prefix, `versions.just`, `env/` and `docs/udd/` in the root; state stays
    in `.local/eid/`, next to `.local/host/`. Done when setup, start and the recipes work as
    before, and lint passes
-9. [ ] adapt the bump skill, `.agents/skills/testbed-bump-versions/`, to the pins in
+9. [x] adapt the bump skill, `.agents/skills/testbed-bump-versions/`, to the pins in
    `versions.just`, like the BeIDConnect tag, and rename it
 10. [ ] document the host prerequisites in `docs/udd/` and the usage in the README
 
