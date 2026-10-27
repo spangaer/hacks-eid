@@ -5,10 +5,12 @@
 
 # Devcontainer setup for the e-ID: the eID repo, a polkitd stub and the packages that need them;
 # safe to rerun, it skips what's there. Debian's own packages are in the Dockerfile.
-# usage: setup.sh <state dir> <eid-archive url> <eid-archive sha256>
+# usage: setup.sh <state dir> <eid-archive url> <eid-archive sha256> <beidconnect repo> <tag>
+#   <commit>
 set -euo pipefail
 
 state=$1 archive_url=$2 archive_sha256=$3
+bc_repo=$4 bc_tag=$5 bc_commit=$6
 cache=$state/cache debs=$state/debs
 
 # no tty in postCreateCommand: noninteractive spares the debconf fallback chatter
@@ -71,3 +73,38 @@ if ! grep -qs libbeidpkcs11 "$nssdb/pkcs11.txt"; then
     [[ -f $nssdb/cert9.db ]] || certutil -d "sql:$nssdb" -N --empty-password
     modutil -force -dbdir "sql:$nssdb" -add "Belgium eID" -libfile libbeidpkcs11.so.0
 fi
+
+# BeIDConnect has no Linux package anywhere, so it's built here, once per pinned tag; installing
+# it again after a rebuild reruns its postinst, which writes the native messaging manifests
+"$(dirname "$0")/beidconnect.sh" "$state" "$bc_repo" "$bc_tag" "$bc_commit"
+if [[ $(dpkg-query -W -f '${Version}' beidconnect 2> /dev/null) != "$bc_tag" ]]; then
+    apt install -y "$debs/beidconnect_${bc_tag}_$(dpkg --print-architecture).deb"
+fi
+
+# The BeIDConnect extension, force-installed by policy from the Web Store's update server, as its
+# page hangs in this Chromium; the ID is the store's, which the manifests allow. /etc is lost on
+# rebuild, so it's written each time.
+sudo install -d /etc/chromium/policies/managed
+sudo tee /etc/chromium/policies/managed/beidconnect.json > /dev/null << 'JSON'
+{
+    "ExtensionInstallForcelist": [
+        "pencgnkbgaekikmiahiaakjdgaibiipp;https://clients2.google.com/service/update2/crx"
+    ]
+}
+JSON
+
+# signing/, in the repo root: uploads/, for documents to sign from Chromium, and downloads/, for
+# what it saves, like signed documents; out of .local/, as Chromium's GTK file dialog shows dot
+# dirs badly. Both are bookmarked in that dialog; the bookmarks are in the home dir.
+signing=$(cd "$(dirname "$0")/../.." && pwd)/signing
+bookmarks=$HOME/.config/gtk-3.0/bookmarks
+mkdir -p "$signing/uploads" "$signing/downloads" "${bookmarks%/*}"
+for dir in uploads downloads; do
+    line="file://$signing/$dir $dir"
+    grep -qsxF "$line" "$bookmarks" || echo "$line" >> "$bookmarks"
+done
+
+# recommended, not managed, so it can be changed in Chromium's settings
+sudo install -d /etc/chromium/policies/recommended
+printf '{ "DownloadDirectory": "%s" }\n' "$signing/downloads" |
+    sudo tee /etc/chromium/policies/recommended/downloads.json > /dev/null

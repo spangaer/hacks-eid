@@ -98,20 +98,26 @@ container starts without one.
   with `modutil` each time; `beid-update-nssdb` errors on a new DB. The Chromium profile, with
   the extension, goes in `.local/eid/chromium/` through `--user-data-dir`, so it survives
 - BeIDConnect's native messaging manifest goes in `/etc/chromium/native-messaging-hosts/`,
-  from setup
+  from its package's postinst
 
 ## BeIDConnect, built in the devcontainer
 
 - a `beidconnect` recipe clones
-  [Fedict/fts-beidconnect](https://github.com/Fedict/fts-beidconnect) at a commit pinned in the
-  `eid/` component, into `.local/eid/src/`, builds it, `make` in `linux/`, and packs it as a
-  `.deb` in `.local/eid/debs/`, named after the commit; so it survives a rebuild, and only a
-  bumped pin builds anew
+  [Fedict/fts-beidconnect](https://github.com/Fedict/fts-beidconnect) at a tag pinned in the
+  `eid/` component, with its commit, into `.local/eid/src/`, and builds a `.deb` in
+  `.local/eid/debs/` with the repo's own `debian/`, named after the tag; so it survives a
+  rebuild, and only a bumped pin builds anew
+- done: `debian/`'s postinst runs `beidconnect -setup`, which writes the native messaging
+  manifests, Chromium's in `/etc/chromium/native-messaging-hosts/`; reinstalling after a
+  rebuild writes them anew
 - setup installs that `.deb`, building it first if it's missing; a first setup takes longer
 - its build dependencies, like boost, go in the Dockerfile's install line like any package;
   they stay, as removing them makes reruns slower and setup less idempotent
 - packing a `.deb`, rather than `make install`, lets apt track and remove it, and setup can
   reinstall it after a rebuild without building again
+- done: the extension's Web Store page hangs in this Chromium, so a managed policy
+  force-installs it from the store's update server; signing needs `--no-xshm`, as the upload
+  dialog crashed Chromium with a `BadShmSeg` otherwise
 
 ## Steps
 
@@ -129,7 +135,7 @@ checked once it's done and ready to commit.
    `eid-viewer` reads it
 6. [x] authentication: Chromium, its launcher recipe and the NSS registration; done when a CSAM
    login with the card succeeds
-7. [ ] signing: the `beidconnect` recipe, setup installs the `.deb` and its manifest, and the
+7. [x] signing: the `beidconnect` recipe, setup installs the `.deb` and its manifest, and the
    extension goes into the profile; done when a document signs on a BeIDConnect signing page
 8. [ ] adapt the bump skill, `.agents/skills/testbed-bump-versions/`, to `eid/`'s pins, like the
    BeIDConnect commit, and rename it

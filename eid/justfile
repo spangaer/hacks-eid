@@ -13,9 +13,17 @@ local := parent_directory(source_directory()) / ".local" / "eid"
 default:
     @just --list
 
-# devcontainer setup: the eID repo, a polkitd stub, pcscd and the middleware; safe to rerun
+# devcontainer setup: the eID repo, a polkitd stub, pcscd, the middleware and BeIDConnect; safe
+# to rerun
 setup:
-    env/setup.sh {{ quote(local) }} {{ quote(eid_archive_url) }} {{ eid_archive_sha256 }}
+    env/setup.sh {{ quote(local) }} {{ quote(eid_archive_url) }} {{ eid_archive_sha256 }} \
+        {{ quote(beidconnect_repo) }} {{ beidconnect_tag }} {{ beidconnect_commit }}
+
+# build BeIDConnect's .deb from the pinned tag, into .local/eid/debs/, if it isn't there; setup
+# does it too, and installs it
+beidconnect:
+    env/beidconnect.sh {{ quote(local) }} {{ quote(beidconnect_repo) }} {{ beidconnect_tag }} \
+        {{ beidconnect_commit }}
 
 # start pcscd, with the reader's bus linked; on start, safe to rerun
 start:
@@ -37,9 +45,17 @@ card:
 viewer:
     eid-viewer
 
+# --disable-gpu, as over the forwarded X display, GPU compositing draws a see-through window;
+# --no-xshm, as the X server, on the host, can't attach the container's shared memory, and the
+# BadShmSeg that follows kills Chromium, e.g. on opening a file dialog. GTK's settings, like the
+# file dialog's, in memory, as dconf needs a D-Bus session bus, and floods the log without one.
+#
 # Chromium, with its profile in .local/, so it survives a rebuild; args go to Chromium, like a URL
-# --disable-gpu, as over the forwarded X display, GPU compositing draws a see-through window
 [positional-arguments]
 chromium *args:
     mkdir -p {{ quote(local / "chromium") }}
-    chromium --user-data-dir={{ quote(local / "chromium") }} --disable-gpu "$@"
+    GSETTINGS_BACKEND=memory chromium --user-data-dir={{ quote(local / "chromium") }} \
+        --disable-gpu --no-xshm "$@"
+
+# Chromium at the federal signing service, which signs through BeIDConnect
+sign: (chromium "https://sign.belgium.be")

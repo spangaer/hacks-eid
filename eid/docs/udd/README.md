@@ -22,6 +22,8 @@ recipes with `just` in `eid/`, or as `just eid::<recipe>` from the root.
     D-Bus system bus and systemd, which the Dockerfile pins out. pcscd runs with
     `--disable-polkit` instead, which allows all clients; this container has one user
   - `pcscd`, `eid-mw`, with the PKCS#11 module `libbeidpkcs11.so.0`, and `eid-viewer`
+  - `beidconnect`, built here, see below; its build dependencies, `libboost-dev` and
+    `libpcsclite-dev`, are in the Dockerfile
 
 ## Reader
 
@@ -56,6 +58,8 @@ From the reader up, each layer on the one before:
   forwarded X display
 - `just eid::chromium https://iamapps.belgium.be/tma`: the government's test login, with the
   card, through CSAM
+- `just eid::sign`: Chromium at the federal signing service, `https://sign.belgium.be`, which
+  signs through BeIDConnect
 
 ## Chromium
 
@@ -77,8 +81,36 @@ Chromium ── NSS ── ~/.pki/nssdb/pkcs11.txt: library=libbeidpkcs11.so.0
 - `just eid::chromium [args]`: its profile, in `.local/eid/chromium/`, survives a rebuild;
   args, like a URL, go to Chromium
 - the sandbox works as is; `--disable-gpu`, as GPU compositing over the forwarded X display
-  draws a see-through window
-- the D-Bus errors it logs are harmless: the container has no system bus
+  draws a see-through window; `--no-xshm`, as the X server, on the host, can't attach the
+  container's shared memory, and the error kills Chromium, e.g. on a file dialog
+- the D-Bus errors it logs are harmless: the container has no system bus. GTK's settings, like
+  the file dialog's hidden files toggle, are kept in memory, `GSETTINGS_BACKEND=memory`, as
+  dconf needs a session bus; so they last until Chromium closes
+- `signing/`, in the repo root, gitignored, has `uploads/`, for documents to sign, and
+  `downloads/`, Chromium's download folder by a recommended policy; both are bookmarked in its
+  file dialog, which shows dot dirs badly. Setup makes them, and the policy and bookmarks, as
+  `/etc` and the home dir are lost on rebuild
+
+## Signing: BeIDConnect
+
+```
+signing page ── BeIDConnect extension ── native messaging
+                                              └─ beidconnect ── pcscd ── the card
+```
+
+- the signing page asks the extension, which runs `beidconnect`, by its manifest in
+  `/etc/chromium/native-messaging-hosts/`, over stdin and stdout; it reads the card through
+  pcscd itself, not through eid-mw
+- the PIN is typed on the page, which sends it along with the request, unless the reader has a
+  pinpad; the ACR38U has none. So type it only on a trusted signing page, like
+  `https://sign.belgium.be`. A login is different: there, eid-mw's own dialog asks for it
+- no Linux package anywhere, so `just eid::beidconnect` builds one, with the repo's own
+  `debian/`, from the tag pinned in [versions.just](../../versions.just), checked against its
+  commit, into `.local/eid/debs/`; `just setup` builds it if it's missing, and installs it.
+  Its postinst writes the manifests, so a reinstall after a rebuild restores them
+- the extension, from the Chrome Web Store, whose ID the manifests allow, is force-installed by
+  a managed policy from setup, as its store page hangs here; so it can't be removed from
+  Chromium
 
 ## State
 
@@ -87,3 +119,4 @@ Chromium ── NSS ── ~/.pki/nssdb/pkcs11.txt: library=libbeidpkcs11.so.0
 - `cache/`: downloads, named after their version
 - `debs/`: packages built here, like `polkitd-stub`
 - `chromium/`: Chromium's profile
+- `src/`: sources built here, like BeIDConnect's

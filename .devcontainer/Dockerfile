@@ -28,5 +28,6 @@ RUN apt-get update && apt-get install -y time ripgrep just tk shellcheck iputils
 # opensc: pkcs11-tool, to test the PKCS#11 module
 # chromium: the browser that's to use the card
 # equivs: builds the polkitd stub package
+# libboost-dev, libpcsclite-dev: BeIDConnect's build dependencies, it's built in setup
 RUN apt-get update && apt-get install -y --no-install-recommends \
-      libccid pcsc-tools opensc chromium equivs
+      libccid pcsc-tools opensc chromium equivs libboost-dev libpcsclite-dev
