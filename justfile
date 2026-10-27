@@ -58,6 +58,9 @@ chromium *args:
     GSETTINGS_BACKEND=memory chromium --user-data-dir={{ quote(local / "chromium") }} \
         --disable-gpu --no-xshm "$@"
 
+# Chromium at the government's test login, which logs in with the card through CSAM
+login: (chromium "https://iamapps.belgium.be/tma")
+
 # Chromium at the federal signing service, which signs through BeIDConnect
 sign: (chromium "https://sign.belgium.be")
 

@@ -57,8 +57,8 @@ From the reader up, each layer on the one before:
 - `just card`: the PKCS#11 module, `libbeidpkcs11.so.0`, lists the card's token
 - `just viewer`: eid-viewer reads the card; its PIN test checks the PIN dialog, on the
   forwarded X display
-- `just chromium https://iamapps.belgium.be/tma`: the government's test login, with the
-  card, through CSAM
+- `just login`: Chromium at the government's test login,
+  `https://iamapps.belgium.be/tma`, with the card, through CSAM
 - `just sign`: Chromium at the federal signing service, `https://sign.belgium.be`, which
   signs through BeIDConnect
 
