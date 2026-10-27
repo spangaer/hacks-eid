@@ -34,8 +34,10 @@ host                                    devcontainer
 
 - before the container is created, [usb-bus-link.sh](../../.devcontainer/usb-bus-link.sh)
   finds the reader by its interface class, `0b`, and links `.local/host/smartcard-bus` to its
-  bus dir, if the user can open the reader, else to an empty dir; devcontainer.json mounts the
-  link at `/run/smartcard-bus`. The bus, not the node, as the node's number changes on replug
+  bus dir, if the user can open the reader, else to an empty dir; with no reader plugged in, a
+  link to a bus that's still there stays, so the reader can be plugged in after a rebuild, on
+  that bus. devcontainer.json mounts the link at `/run/smartcard-bus`. The bus, not the node,
+  as the node's number changes on replug
 - the mount's target can't vary with the bus, but libusb opens `/dev/bus/usb/BBB/DDD`; so
   [start.sh](../../env/start.sh) links `/dev/bus/usb/BBB` to the mount, on each start, as
   `/dev` is a fresh tmpfs. The bus comes from the minor of a node in the mount

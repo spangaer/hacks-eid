@@ -45,16 +45,18 @@ from the devcontainer, which has the host's `/sys`, read-only.
 `initializeCommand` finds the reader on the host, in `/sys/bus/usb/devices/` by interface class
 `0b`, and links `.local/host/smartcard-bus` to its `/dev/bus/usb/BBB`; devcontainer.json
 bind-mounts that link at `/run/smartcard-bus`, and `just start` links `/dev/bus/usb/BBB` to it,
-as the mount's target can't vary. No reader found: the link points at an empty dir, and the
-container starts without one.
+as the mount's target can't vary. No reader found: a link to a bus that's still there stays, so
+the reader can be plugged in after a rebuild, on its last bus; else the link points at an empty
+dir, and the container starts without one.
 
 - replugs into any port on the same controller work: the bind shows nodes as they come and go
 - under rootless Podman, without a device cgroup, only nodes the host user can open on the host
   open in the container; the bus's other devices are claimed by kernel drivers or root daemons
 - pcscd runs as `vscode`, the host user under `keep-id`; the container's root is a subordinate
   ID, without the host's ACL on the reader
-- the bus is fixed at container creation: the reader must be plugged in then, and moving it to a
-  port on another bus, like the dock's bus 5, needs a rebuild
+- the bus is fixed at container creation: the reader must be plugged in then, or have been on
+  that bus at the last creation, and moving it to a port on another bus, like the dock's bus 5,
+  needs a rebuild
 - verified: device nodes in the bind mount open, as it has no `nodev`, and the bind follows the
   link
 

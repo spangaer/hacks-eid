@@ -13,8 +13,9 @@
     "waitFor": "postCreateCommand",
     // the services, like pcscd, as nothing starts them in a container; safe to rerun by hand
     "postStartCommand": "just start",
-    // The smartcard reader's USB bus, if the user can open the reader, else an empty dir, see
-    // usb-bus-link.sh; env/start.sh links it to /dev/bus/usb/BBB in the container.
+    // The smartcard reader's USB bus, if the user can open the reader, else the last one found,
+    // or an empty dir, see usb-bus-link.sh; env/start.sh links it to /dev/bus/usb/BBB in the
+    // container.
     "initializeCommand": [
         "sh",
         "${localWorkspaceFolder}/.devcontainer/usb-bus-link.sh",

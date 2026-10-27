@@ -7,11 +7,11 @@
 # usage: usb-bus-link.sh <interface class> <name>, e.g. usb-bus-link.sh 0b smartcard-bus
 # Points .local/host/<name> at the /dev/bus/usb/BBB dir of the first USB device with an
 # interface of that class, if the user can read and write its node, else at an empty dir, as a
-# mount needs a source. devcontainer.json bind-mounts the link; mounting the bus, not the node,
-# lets the device be replugged, as its node's number changes each time. Under rootless Podman,
-# without a device cgroup, the container can open what the user can open on the host, and no
-# more. The link is resolved when the container is created, so a device that moves to another
-# bus needs a rebuild.
+# mount needs a source; with no such device at all, an existing link to a bus stays.
+# devcontainer.json bind-mounts the link; mounting the bus, not the node, lets the device be
+# replugged, as its node's number changes each time. Under rootless Podman, without a device
+# cgroup, the container can open what the user can open on the host, and no more. The link is
+# resolved when the container is created, so a device that moves to another bus needs a rebuild.
 set -eu
 
 class=$1 name=$2
@@ -33,5 +33,14 @@ for f in /sys/bus/usb/devices/*/bInterfaceClass; do
     fi
     why="no read-write on $node"
 done
+# None found: a link to a bus that's still there stays, so a reader plugged in later, after a
+# rebuild, shows up on its last bus; -d follows the link, as a mount's source must exist, and a
+# dock's bus goes with the dock.
+if [ -z "$why" ] && [ -L "$link" ] && [ -d "$link" ] \
+    && [ "$(readlink "$link")" != "$dir/empty" ]; then
+    echo "usb-bus-link: $link -> $(readlink "$link"), kept, no USB device with interface" \
+        "class $class"
+    exit 0
+fi
 ln -sfn "$target" "$link"
 echo "usb-bus-link: $link -> $target, ${why:-no USB device with interface class $class}"
