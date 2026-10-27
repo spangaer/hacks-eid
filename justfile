@@ -61,6 +61,8 @@ chromium *args:
 # Chromium at the government's test login, which logs in with the card through CSAM
 login: (chromium "https://iamapps.belgium.be/tma")
 
+# in the file dialog, pick with Open, or Alt+O: a double-click or Enter cancels, see docs/udd/
+#
 # Chromium at the federal signing service, which signs through BeIDConnect
 sign: (chromium "https://sign.belgium.be")
 

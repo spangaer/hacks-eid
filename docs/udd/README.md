@@ -91,6 +91,12 @@ Chromium ── NSS ── ~/.pki/nssdb/pkcs11.txt: library=libbeidpkcs11.so.0
   `downloads/`, Chromium's download folder by a recommended policy; both are bookmarked in its
   file dialog, which shows dot dirs badly. Setup makes them, and the policy and bookmarks, as
   `/etc` and the home dir are lost on rebuild
+- in the file dialog, pick a file with its Open button, or Alt+O: a double-click or Enter
+  closes it as cancelled, even on a folder, so the page gets nothing. Chromium's GTK dialog
+  gives Open a response ID that isn't GTK's accept, so that holding Enter can't pick a file
+  unseen; on a desktop, Chromium uses xdg-desktop-portal's dialog instead, which the container
+  doesn't have. No flag changes that; a portal, with a session bus, or KDE's `kdialog` would,
+  at the cost of many more packages
 
 ## Signing: BeIDConnect
 
