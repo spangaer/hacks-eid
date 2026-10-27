@@ -23,6 +23,29 @@ recipes with `just` in `eid/`, or as `just eid::<recipe>` from the root.
     `--disable-polkit` instead, which allows all clients; this container has one user
   - `pcscd`, `eid-mw`, with the PKCS#11 module `libbeidpkcs11.so.0`, and `eid-viewer`
 
+## Reader
+
+```
+host                                    devcontainer
+/dev/bus/usb/001/  ── bind mount ──►    /run/smartcard-bus/  ◄── link ──  /dev/bus/usb/001
+                                        pcscd, as vscode ── libccid ── /dev/bus/usb/001/012
+```
+
+- before the container is created, [usb-bus-link.sh](../../../.devcontainer/usb-bus-link.sh)
+  finds the reader by its interface class, `0b`, and links `.local/host/smartcard-bus` to its
+  bus dir, if the user can open the reader, else to an empty dir; devcontainer.json mounts the
+  link at `/run/smartcard-bus`. The bus, not the node, as the node's number changes on replug
+- the mount's target can't vary with the bus, but libusb opens `/dev/bus/usb/BBB/DDD`; so
+  [start.sh](../../env/start.sh) links `/dev/bus/usb/BBB` to the mount, on each start, as
+  `/dev` is a fresh tmpfs. The bus comes from the minor of a node in the mount
+- pcscd runs as `vscode`, not root: under rootless Podman with `keep-id`, `vscode` is the host
+  user, who has the host's ACL on the reader, and root is a subordinate ID, who hasn't
+- nothing starts services in the container: `postStartCommand` runs `just start`
+- no udevd in the container, so pcscd doesn't hear of a replugged reader: `just eid::restart`.
+  A card going in or out is libccid's business, that just works
+- the reader moved to another bus: the mount stays on the old one until a rebuild; `just start`
+  warns
+
 ## State
 
 `.local/eid/`, made by `just setup`; it survives a rebuild.

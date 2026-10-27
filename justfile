@@ -15,6 +15,11 @@ default:
 setup:
     just eid::setup
 
+# calls each component's start as just <module>::start
+# devcontainer services, run on start; safe to rerun
+start:
+    just eid::start
+
 # git's file list and reuse skip what .gitignore excludes, like .local/
 # lint licensing and all shell scripts
 lint:

@@ -6,7 +6,7 @@ Work in progress, see [PLAN.eid/](./PLAN.eid/README.md).
 
 It started as a fork of [k8s-testbed](https://github.com/spangaer/k8s-testbed), for the way it
 gets `/dev/kvm` into the devcontainer without giving it privileges; that pattern lives on in
-[device-link.sh](./.devcontainer/device-link.sh).
+[usb-bus-link.sh](./.devcontainer/usb-bus-link.sh).
 
 The code itself has no ambition to be production grade.
 

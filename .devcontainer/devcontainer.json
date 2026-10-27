@@ -11,17 +11,23 @@
     // connect only after setup, so the server and its terminals start with any device group it
     // adds; groups are fixed per process, only a container restart refreshes them
     "waitFor": "postCreateCommand",
-    // Reference for passing a host device, unused for now: the device if a probe container can
-    // open it, else /dev/null, see device-link.sh. --device, unlike a bind mount, also gets the
-    // device past rootful Docker's device cgroup.
-    // "initializeCommand": [
-    //     "sh",
-    //     "${localWorkspaceFolder}/.devcontainer/device-link.sh",
-    //     "/dev/kvm"
-    // ],
-    // "runArgs": [
-    //     "--device=${localWorkspaceFolder}/.local/host/kvm:/dev/kvm"
-    // ],
+    // the services, like pcscd, as nothing starts them in a container; safe to rerun by hand
+    "postStartCommand": "just start",
+    // The smartcard reader's USB bus, if the user can open the reader, else an empty dir, see
+    // usb-bus-link.sh; eid/env/start.sh links it to /dev/bus/usb/BBB in the container.
+    "initializeCommand": [
+        "sh",
+        "${localWorkspaceFolder}/.devcontainer/usb-bus-link.sh",
+        "0b",
+        "smartcard-bus"
+    ],
+    "mounts": [
+        {
+            "type": "bind",
+            "source": "${localWorkspaceFolder}/.local/host/smartcard-bus",
+            "target": "/run/smartcard-bus"
+        }
+    ],
     "customizations": {
         "vscode": {
             "extensions": [

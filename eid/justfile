@@ -16,3 +16,11 @@ default:
 # devcontainer setup: the eID repo, a polkitd stub, pcscd and the middleware; safe to rerun
 setup:
     env/setup.sh {{ quote(local) }} {{ quote(eid_archive_url) }} {{ eid_archive_sha256 }}
+
+# start pcscd, with the reader's bus linked; on start, safe to rerun
+start:
+    env/start.sh
+
+# restart pcscd, to see a replugged reader, as nothing tells it in the container
+restart:
+    env/start.sh restart

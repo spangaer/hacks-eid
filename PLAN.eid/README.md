@@ -43,24 +43,26 @@ from the devcontainer, which has the host's `/sys`, read-only.
 ### Chosen: the reader's bus dir, bind-mounted
 
 `initializeCommand` finds the reader on the host, in `/sys/bus/usb/devices/` by interface class
-`0b`, and links `.local/host/usb-bus` to its `/dev/bus/usb/BBB`; devcontainer.json bind-mounts
-that link to the same path in the container. No reader found: the link points at an empty dir,
-and the container starts without one, like device-link.sh does with `/dev/null`.
+`0b`, and links `.local/host/smartcard-bus` to its `/dev/bus/usb/BBB`; devcontainer.json
+bind-mounts that link at `/run/smartcard-bus`, and `just start` links `/dev/bus/usb/BBB` to it,
+as the mount's target can't vary. No reader found: the link points at an empty dir, and the
+container starts without one.
 
 - replugs into any port on the same controller work: the bind shows nodes as they come and go
 - under rootless Podman, without a device cgroup, only nodes the host user can open on the host
   open in the container; the bus's other devices are claimed by kernel drivers or root daemons
+- pcscd runs as `vscode`, the host user under `keep-id`; the container's root is a subordinate
+  ID, without the host's ACL on the reader
 - the bus is fixed at container creation: the reader must be plugged in then, and moving it to a
   port on another bus, like the dock's bus 5, needs a rebuild
-- update the device rule in `.agents/project.md`: rootless, the host's permissions are the
-  boundary, and a bus dir is the widest a device pass-through goes
-- to verify: device nodes in the bind mount open, i.e. no `nodev` on it, and the bind follows a
-  link, as `--device` does
+- verified: device nodes in the bind mount open, as it has no `nodev`, and the bind follows the
+  link
 
 ### Rejected
 
-- the reader's node through device-link.sh: its number changes on every replug, a symlink
-  doesn't help, as `--device` resolves it at creation; each replug would need a rebuild
+- the reader's node, passed with `--device`, as k8s-testbed did `/dev/kvm`: its number changes
+  on every replug, a symlink doesn't help, as `--device` resolves it at creation; each replug
+  would need a rebuild
 - all of `/dev/bus/usb`: survives any replug, but exposes every bus, while the reader has a
   home port
 
@@ -121,7 +123,7 @@ checked once it's done and ready to commit.
    `.local/eid/`, `docs/udd/`
 3. [x] packages: the eID repo, the `polkitd` stub, `pcscd`, `libccid`, `pcsc-tools`, `opensc`,
    `eid-mw`, `eid-viewer`; in the Dockerfile and by hand, per the conventions
-4. [ ] reader: the bus link and mount into devcontainer.json, and pcscd started; done when
+4. [x] reader: the bus link and mount into devcontainer.json, and pcscd started; done when
    `pcsc_scan` sees the reader and the card, also after a replug and a pcscd restart
 5. [ ] middleware: done when `pkcs11-tool --module libbeidpkcs11.so.0 -L` lists the card and
    `eid-viewer` reads it

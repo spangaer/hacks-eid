@@ -35,8 +35,9 @@ component's folder, that component's. From the root, a module's recipes run as
   the Dockerfile's `apt-get install` line, and put setup logic in an idempotent `setup` recipe,
   which the root's `setup` calls, never only in the Dockerfile
 - giving the devcontainer privileges is off limits; a host device only goes in when the host
-  already grants it to the user, through the probe and link of
-  [device-link.sh](../.devcontainer/device-link.sh)
+  already grants it to the user, through a link checked on the host, like
+  [usb-bus-link.sh](../.devcontainer/usb-bus-link.sh)'s: rootless, the host's permissions are
+  the boundary, and a USB bus dir is the widest a pass-through goes
 - a component keeps its state in `.local/<component>/`
 - every new file gets an SPDX header, MIT: run `just annotate`, never
   `reuse annotate --recursive`, which can't skip what `REUSE.toml` covers: Markdown and
