@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# SPDX-FileCopyrightText: Jean-Luc Deprez <https://github.com/spangaer>
-# SPDX-License-Identifier: MIT
-
 # Build BeIDConnect's .deb, with its own debian/, from a pinned tag, into <state>/debs/; skips it
 # if it's there. Its postinst writes the browsers' native messaging manifests.
 # usage: beidconnect.sh <state dir> <repo> <tag> <commit>

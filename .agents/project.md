@@ -31,8 +31,5 @@ The agent index is [README.md](./README.md). The design: [docs/udd/](../docs/udd
   the boundary, and a USB bus dir is the widest a pass-through goes
 - state goes in `.local/eid/`, never the home dir or `/etc` alone: both are lost on rebuild,
   so what has to live there, setup writes anew
-- every new file gets an SPDX header, MIT: run `just annotate`, never
-  `reuse annotate --recursive`, which can't skip what `REUSE.toml` covers: Markdown and
-  `.gitignore` under MIT-0, and JSON other than VS Code's JSONC under MIT; `just lint` checks
-  it all
+- no license or copyright headers: everything is under the root's MIT-0 [LICENSE](../LICENSE)
 - the why of a detail goes in a comment next to it; what spans files goes in `docs/udd/`

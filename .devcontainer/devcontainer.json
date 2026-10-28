@@ -1,5 +1,3 @@
-// SPDX-FileCopyrightText: Jean-Luc Deprez <https://github.com/spangaer>
-// SPDX-License-Identifier: MIT
 // format and options: https://aka.ms/devcontainer.json
 {
     "name": "hacks-eid",

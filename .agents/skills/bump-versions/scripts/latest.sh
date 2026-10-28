@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# SPDX-FileCopyrightText: Jean-Luc Deprez <https://github.com/spangaer>
-# SPDX-License-Identifier: MIT
-
 # Resolve the latest upstream value of each pin in versions.just: eid-archive from the eID repo's
 # signed index, BeIDConnect's newest tag and its commit; print them next to the current ones.
 # Changes nothing.

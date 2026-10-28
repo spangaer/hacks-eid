@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: Jean-Luc Deprez <https://github.com/spangaer>
-# SPDX-License-Identifier: MIT
-
 FROM mcr.microsoft.com/devcontainers/base:2.2-trixie
 
 # keep systemd and friends out, they misbehave in containers
@@ -17,9 +14,8 @@ RUN printf '%s\n' \
 # shellcheck: lint for shell scripts
 # iputils-ping: ping, for basic network reachability checks
 # dnsutils: dig and nslookup, for debugging DNS resolution
-# reuse: license and copyright header lint, see https://reuse.software/
 RUN apt-get update && apt-get install -y time ripgrep just tk shellcheck iputils-ping \
-      dnsutils reuse
+      dnsutils
 
 # e-ID tooling, see docs/udd/; pcscd, eid-mw and eid-viewer aren't here: they need the eID repo
 # and a polkitd stub first, which just setup provides

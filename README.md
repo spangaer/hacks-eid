@@ -10,8 +10,8 @@ gets `/dev/kvm` into the devcontainer without giving it privileges; that pattern
 
 The code itself has no ambition to be production grade.
 
-Sources are thrown online with proper license notices, just in case anyone would want to put
-them to use anyway.
+It was produced with Claude Opus, under my guidance, so it claims no copyright: it's under
+[MIT-0](./LICENSE), free for reuse without attribution, should anyone want to put it to use.
 
 ## Usage
 

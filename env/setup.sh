@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# SPDX-FileCopyrightText: Jean-Luc Deprez <https://github.com/spangaer>
-# SPDX-License-Identifier: MIT
-
 # Devcontainer setup for the e-ID: the eID repo, a polkitd stub and the packages that need them;
 # safe to rerun, it skips what's there. Debian's own packages are in the Dockerfile.
 # usage: setup.sh <state dir> <eid-archive version> <url> <sha256> <beidconnect repo> <tag>

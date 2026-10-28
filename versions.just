@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: Jean-Luc Deprez <https://github.com/spangaer>
-# SPDX-License-Identifier: MIT
-
 # the eID repo's own package, which adds its apt source and signing key; checksum from the repo's
 # trixie index, dists/trixie/main/binary-amd64/Packages
 eid_archive_version := "2026.1"

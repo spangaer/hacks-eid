@@ -1,6 +1,3 @@
-# SPDX-FileCopyrightText: Jean-Luc Deprez <https://github.com/spangaer>
-# SPDX-License-Identifier: MIT
-
 import 'versions.just'
 
 set shell := ["bash", "-euo", "pipefail", "-c"]
@@ -66,13 +63,7 @@ login: (chromium "https://iamapps.belgium.be/tma")
 # Chromium at the federal signing service, which signs through BeIDConnect
 sign: (chromium "https://sign.belgium.be")
 
-# git's file list and reuse skip what .gitignore excludes, like .local/
-# lint licensing and all shell scripts
+# git's file list skips what .gitignore excludes, like .local/
+# lint all shell scripts
 lint:
-    reuse lint
     git ls-files -z --cached --others --exclude-standard '*.sh' | xargs -0 shellcheck -x
-
-# use this, not reuse annotate --recursive
-# add an SPDX header to files without one, skipping those REUSE.toml covers
-annotate license="MIT" holder="Jean-Luc Deprez <https://github.com/spangaer>":
-    .reuse/annotate.sh {{ quote(license) }} {{ quote(holder) }}

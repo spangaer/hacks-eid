@@ -1,8 +1,5 @@
 #!/usr/bin/env bash
 
-# SPDX-FileCopyrightText: Jean-Luc Deprez <https://github.com/spangaer>
-# SPDX-License-Identifier: MIT
-
 # Start pcscd, after linking the reader's bus where libusb looks for it; safe to rerun.
 # usage: start.sh [restart], restart to pick up a replugged reader: without udevd in the
 # container, pcscd sees readers only when it starts

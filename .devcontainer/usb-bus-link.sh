@@ -1,8 +1,5 @@
 #!/bin/sh
 
-# SPDX-FileCopyrightText: Jean-Luc Deprez <https://github.com/spangaer>
-# SPDX-License-Identifier: MIT
-
 # Runs on the host, from initializeCommand, before the devcontainer is created.
 # usage: usb-bus-link.sh <interface class> <name>, e.g. usb-bus-link.sh 0b smartcard-bus
 # Points .local/host/<name> at the /dev/bus/usb/BBB dir of the first USB device with an
