@@ -4,9 +4,15 @@ A devcontainer to use a Belgian e-ID card from inside it: a smartcard reader on 
 available to the e-ID middleware in the devcontainer, so Chromium there can log in and sign with
 it. How it works: [docs/udd/](./docs/udd/README.md).
 
-It started as a fork of [k8s-testbed](https://github.com/spangaer/k8s-testbed), for the way it
-gets `/dev/kvm` into the devcontainer without giving it privileges; that pattern lives on in
-[usb-bus-link.sh](./.devcontainer/usb-bus-link.sh).
+All the tooling, the middleware, BeIDConnect, its build and Chromium, stays in the devcontainer,
+so the host remains untouched: nothing gets installed there, and the devcontainer runs without
+privileges; only tested with rootless Podman.
+
+> **Beware**: the reader's whole USB bus is mounted into the devcontainer, not just the reader,
+> so it keeps working across replugs without a rebuild. Any other device on that bus is then
+> reachable from the devcontainer, as far as the host user's permissions allow. So don't use it
+> as-is next to sensitive devices on the same bus; or adapt it to expose a single port, which will
+> likely need a container rebuild on each replug.
 
 The code itself has no ambition to be production grade.
 
@@ -18,7 +24,8 @@ It was produced with Claude Opus, under my guidance, so it claims no copyright: 
 Check the [host prerequisites](./docs/udd/README.md#host-prerequisites) first.
 
 1. plug in the reader, then open the repo in its devcontainer; creating it runs `just setup`,
-   which takes a while the first time, as it builds BeIDConnect
+   which takes a while the first time, as it builds
+   [BeIDConnect](https://github.com/Fedict/fts-beidconnect)
 2. insert the card, and check each layer, from the reader up:
    - `just scan`: the reader and the card, Ctrl+C to stop
    - `just card`: the card's token, through the PKCS#11 module

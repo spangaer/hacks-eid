@@ -64,7 +64,8 @@ host                                    devcontainer
   bus dir, if the user can open the reader, else to an empty dir; with no reader plugged in, a
   link to a bus that's still there stays, so the reader can be plugged in after a rebuild, on
   that bus. devcontainer.json mounts the link at `/run/smartcard-bus`. The bus, not the node,
-  as the node's number changes on replug
+  as the node's number changes on replug; the flip side: every device on that bus the host
+  user can open is reachable from the container
 - the mount's target can't vary with the bus, but libusb opens `/dev/bus/usb/BBB/DDD`; so
   [start.sh](../../env/start.sh) links `/dev/bus/usb/BBB` to the mount, on each start, as
   `/dev` is a fresh tmpfs. The bus comes from the minor of a node in the mount
@@ -138,7 +139,8 @@ signing page ── BeIDConnect extension ── native messaging
 - the PIN is typed on the page, which sends it along with the request, unless the reader has a
   pinpad; the ACR38U has none. So type it only on a trusted signing page, like
   `https://sign.belgium.be`. A login is different: there, eid-mw's own dialog asks for it
-- no Linux package anywhere, so `just beidconnect` builds one, with the repo's own
+- no Linux package anywhere, so `just beidconnect` builds one from
+  [Fedict/fts-beidconnect](https://github.com/Fedict/fts-beidconnect), with the repo's own
   `debian/`, from the tag pinned in [versions.just](../../versions.just), checked against its
   commit, into `.local/eid/debs/`; `just setup` builds it if it's missing, and installs it.
   Its postinst writes the manifests, so a reinstall after a rebuild restores them
